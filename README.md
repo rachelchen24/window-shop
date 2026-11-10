@@ -1,59 +1,27 @@
 # Window Shop
 
-*Working title. Shop like crazy and spend nothing real.*
+A shopping game that helps you spend less in real life.
 
-## Vision
+Set a budget and log what you really spend. Whatever's left over becomes in-game cash, which you spend on clothes for your pixel doll. For example, with a $300/week budget, spending $160 leaves your doll $140 to shop with.
 
-A game that helps curb shopping habits, online shopping most of all, by giving you the dopamine of shopping without the real spending.
-
-1. **Set a budget**: daily, weekly, or monthly (e.g. $300/week).
-2. **Log real-life spending**: manual entry, since there's no bank connection.
-3. **Leftover becomes in-game cash**: spend $160 of a $300 budget and your avatar gets **$140** in fake money.
-4. **Shop in-game**: browse shops and brands. You unlock more of them by playing more.
-5. **Dress your avatar**: everything you buy goes into a digital closet for styling.
+The full design is in [spec.md](spec.md).
 
 ## Run it
 
-Open `index.html` in a browser. There's nothing to install and no server. Your data stays in that browser (localStorage).
+Open `index.html` in a browser. Nothing to install. Your data is saved in that browser.
 
-- **Try a period ending:** add `?today=2026-11-23` to the URL to pretend it's that date. Test mode saves separately, so it never touches your real data.
-- **Tests:** `node --test` runs the money-rule tests (Node 18+).
+- `?today=2026-11-23` in the URL pretends it's that date, so you can test a period ending. Test data is kept separately from your real data.
+- `node --test` runs the money-rule tests (needs Node 18+).
 
-| File | What's in it |
-|---|---|
-| `src/money.js` | Money rules: periods, payouts, streaks, milestones. No UI code. |
-| `src/app.js` | Screens, forms and saving. |
-| `styles.css` | Look and feel, with light and dark themes. |
+## Files
 
-## MVP scope (keep it tight)
+- `src/money.js`: the money rules (periods, payouts, streaks, milestones)
+- `src/app.js`: the screens and saving
+- `styles.css`: the styles
+- `tests/`: the money-rule tests
 
-- [x] Budget setup (choose the period and enter an amount)
-- [x] Expense log (amount, note, date) with running total
-- [x] In-game wallet = budget − real spend (refreshes each period)
-- [ ] One or two starter shops with a handful of clothing items
-- [ ] Buy item → goes to closet
-- [ ] Avatar with clothing slots (top, bottom, shoes, accessory)
-- [ ] Closet screen: tap to equip/unequip
+## Status
 
-## Later / stretch
+Done: setting a budget, logging spending, and the in-game wallet.
 
-- Unlockable shops (by streaks, days played, or money saved)
-- Makeup and hair
-- Saving streaks and "money saved all-time" stat
-- Outfit saving/sharing
-- Wishlist: "I wanted this IRL, bought it in-game instead"
-
-## Name ideas
-
-| Name | Vibe |
-|---|---|
-| **Window Shop** | Looking without buying. The core idea in two words. |
-| Unspent | Clean and minimal. The leftover money is the point. |
-| Closet Credit | Your savings turn into closet credit. |
-| Faux Spree | A fake shopping spree. Playful. |
-| Dress the Difference | You wear the gap between budget and spending. |
-| Leftover Luxe | Luxury bought with leftovers. |
-| Pocket Closet | A cute, compact closet you carry around. |
-| Cart & Keep | Fill the cart and keep the cash. |
-| Save & Slay | Fun, a little meme-y. |
-| Spare Change Closet | Cozy and literal. |
+Next: stores, the pixel doll and the closet.
