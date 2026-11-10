@@ -6,6 +6,10 @@ A game that helps people cut back on shopping, especially online shopping. You s
 
 **Scope for now:** women's fashion (clothing and accessories). No makeup or hair yet.
 
+### Constraints
+- **No bank or card connection.** The user types in their budget and every real-life purchase by hand. The game takes their word for it.
+- **The first build takes 20–30 minutes.** It covers entering a budget, logging spending, and seeing the wallet and total saved. Stores, the avatar and the closet come right after, as time allows.
+
 ## 2. Core loop
 
 1. Set a budget (daily, weekly or monthly).
@@ -77,19 +81,89 @@ A game that helps people cut back on shopping, especially online shopping. You s
 ### 5.1 The avatar must really wear what's bought
 Every item that can be bought has a **simplified drawing that fits the avatar**. Buying a red satin midi dress means the avatar shows up in a red midi dress. This is the most important part of the game feeling real.
 
-### 5.2 How it's built
-- The avatar is a stylized 2D figure drawn as vector art (SVG), with a few skin-tone and body options.
-- Clothes are **stacked layers**. Each item belongs to one slot:
-  1. Shoes
-  2. Bottoms (skirt, pants, shorts)
-  3. Tops
-  4. One-piece (dress or jumpsuit; replaces top and bottoms)
-  5. Outerwear (jacket, coat, cardigan)
-  6. Bag
-  7. Accessories (jewelry, sunglasses, hat)
-- **Item = shape template + color + pattern.** A handful of templates (e.g. midi dress, mini skirt, crop top, wide-leg jeans, blazer, sneakers) combined with colors and patterns (solid, stripes, floral, check, denim, satin sheen) makes a large catalog without drawing each item by hand.
+### 5.2 Art style: pixel fashion dolls
+- **Look:** big-headed fashion dolls in the early-2000s style (the Bratz-doll look). That means:
+  - an oversized head
+  - huge eyes with lashes
+  - glossy lips
+  - a tiny torso and long, thin legs
+  - chunky platform shoes
+  - a glam, trendy attitude
+- **Original characters only.** We borrow the general style, not Bratz itself: no Bratz names, logos, characters or exact face designs. Bratz is a trademark owned by MGA Entertainment, so our dolls need their own faces and personalities.
+- **Pixel art:** the doll and all clothes are low-resolution pixel sprites, shown scaled up with sharp pixel edges. Pixels hide detail, which is good: clothes only have to read as "red satin midi dress", not be realistic.
+- **The doll's grid:** one fixed pose on a **64 × 128 pixel** canvas, shown at 4× (256 × 512 on screen).
+  - Head: about 40% of the height (rows 0–50)
+  - Torso: rows 50–72
+  - Hips: rows 72–80
+  - Legs: rows 80–118
+  - Feet and platforms: rows 118–128
+- **Skin tones are color swaps.** The doll is drawn with a few fixed "skin" colors that the game replaces at draw time, so many skin tones cost no extra art.
+- **One body shape in the first version.** Every new body shape means redrawing every clothing piece for it, so more body options come later (see open questions).
 
-### 5.3 Closet
+### 5.3 Layers
+Clothes are stacked layers. Each item belongs to one slot, drawn from bottom to top:
+1. Doll base: body and underwear
+2. Shoes
+3. Bottoms (skirt, pants, shorts)
+4. Tops
+5. One-piece (dress or jumpsuit; replaces top and bottoms)
+6. Outerwear (jacket, coat, cardigan)
+7. Bag
+8. Accessories (jewelry, sunglasses, hat)
+9. Hair (drawn last so it sits over jackets)
+
+### 5.4 Turning real clothes into doll clothes
+The doll has cartoon proportions, so real garments can't simply be shrunk to fit. Every garment is instead described by a **few simple features**, and the game builds the pixel version from **pre-drawn parts** that already fit the doll.
+
+**Step 1: Describe the real garment with simple features.**
+
+| Feature | Options (each one snaps to the nearest) |
+|---|---|
+| Category | top, dress, skirt, pants, shorts, jacket, shoes, bag, accessory |
+| Length | crop, waist, hip, mini, knee, midi, maxi |
+| Fit | fitted, regular, oversized |
+| Neckline | crew, V, scoop, square, halter, strapless, off-shoulder, collar |
+| Sleeves | none, strap, cap, short, elbow, long, puff |
+| Pants leg | skinny, straight, wide, flare, cargo |
+| Color | 1 main + up to 1 accent, picked from a 32-color palette |
+| Pattern | solid, stripes, check/plaid, floral, polka dot, animal, denim, satin shine, sequin sparkle |
+| Signature detail (max 1) | belt, buttons, zipper, ruffle, bow, slit, cut-out, lace-up |
+
+**Simplification rules:**
+- Keep only what can be seen at doll size. Drop tiny details like seams, stitching and small hardware.
+- **Keep one signature detail at most.** If a real top has ruffles, buttons and a bow, keep the one that makes it recognizable.
+- Exaggerate a little in the doll style: platforms get chunkier, flares get wider, crop tops get cropped higher.
+- No logos or brand prints. Graphic tees use simple made-up graphics such as a heart, star, cherry or "XOXO".
+
+**Step 2: Build the pixel version from parts.**
+- Every option above has a **pre-drawn part** fitted to the doll grid: a mask showing which pixels it covers, plus a dark outline.
+  - Examples: "torso, V-neck", "sleeve, puff", "hem, midi", "legs, flare".
+- To build a garment:
+  1. Combine the parts it needs (a top is torso + neckline + sleeves + length).
+  2. Fill that shape with the pattern tile (a small repeating 4 × 4 or 8 × 8 pixel block).
+  3. Shade it automatically: from the main color, make a darker shadow, a lighter highlight and an outline color.
+  4. Add the signature detail on top.
+- A small set of parts covers hundreds of garments: about 9 categories, a few lengths and fits, and the necklines and sleeves, times 32 colors and 9 patterns. Nobody draws each item by hand.
+- **Shoes, bags and accessories** are a small set of whole hand-drawn sprites (platform heel, chunky sneaker, knee boot, mini bag, tote, hoops, sunglasses…) that are just recolored.
+
+**Step 3: Where the features come from.**
+- **Store catalog (first version):** we write the features for each in-game item by hand in a data file. The items follow real trends ("the satin slip skirt everyone has this season"), not copies of a specific brand's product.
+- **Later, from real products:** for the "Resisted It" feature, an AI model that understands images looks at a product photo (or a screenshot the user uploads) and fills in the features. The user can adjust anything before saving. The real photo is shown only on the user's own Resisted wall and is never turned into store stock.
+
+**Example:** a real "red satin cowl-neck midi slip dress with a thigh slit" becomes
+`{ category: dress, length: midi, fit: fitted, neckline: scoop, sleeves: strap, color: red, pattern: satin, detail: slit }`.
+That turns into a red pixel midi dress with straps, a satin shine and a slit, on a doll in platform heels.
+
+### 5.5 Item data
+```
+Item {
+  id, storeId, name, price, slot,
+  category, length, fit, neckline, sleeves, leg,
+  color, accentColor, pattern, detail
+}
+```
+
+### 5.6 Closet
 - A grid of everything owned, filterable by slot and store.
 - Tap to put on or take off. Putting on a dress removes the top and bottoms.
 - **Save outfits**: name a look and put it back on with one tap.
@@ -124,7 +198,8 @@ Outfit     { id, name, equipped: { slot: itemId } }
 
 - A web page that runs entirely in the browser (HTML, CSS and JavaScript). No server.
 - Data is stored in the browser's local storage (`localStorage`). No accounts.
-- The avatar and clothing are vector drawings (SVG) layered by slot.
+- The doll and clothing are pixel sprites. The page draws them in a `<canvas>` on the 64 × 128 grid, layered by slot, with pixel smoothing turned off when scaled up so edges stay sharp.
+- Parts, pattern tiles and the color palette live in plain data files, so new parts and items can be added without code changes.
 - Later: user accounts, syncing across devices, and wrapping it as a phone app.
 
 ## 9. MVP checklist
@@ -150,5 +225,7 @@ Outfit     { id, name, equipped: { slot: itemId } }
 
 - Should overspending have a gentle consequence (for example, the streak resets but nothing else happens)? Current plan: only the streak resets.
 - Should in-game cash ever expire, to encourage playing? Current plan: no.
-- How much choice for avatar bodies and skin tones in the first version?
+- How much choice for avatar bodies and skin tones in the first version? Current plan: one body shape and about 6 skin tones. Each extra body shape means redrawing every clothing part.
+- Who draws the doll base and the clothing parts? Do we draw them ourselves, hire a pixel artist, or start with placeholder art?
+- Should the doll have a few preset characters with names and personalities, or be fully custom?
 - Should "Resisted It" amounts count toward total saved? Current plan: no, to avoid counting the same savings twice. Show them as a separate stat instead.
