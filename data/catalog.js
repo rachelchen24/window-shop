@@ -33,8 +33,9 @@ globalThis.WS_CATALOG = {
 
   // Free outfit every new doll starts in (not sold anywhere).
   starter: [
-    { id: "starter-tank", name: "Basic Tank", price: 0, category: "top", length: "waist", fit: "fitted", neckline: "crew", sleeves: "none", color: "white", pattern: "solid" },
-    { id: "starter-jeans", name: "Everyday Jeans", price: 0, category: "pants", length: "maxi", fit: "regular", leg: "straight", color: "cobalt", pattern: "denim" },
+    // Deliberately plain, so the first purchase feels like a glow-up.
+    { id: "starter-tee", name: "Plain Gray Tee", price: 0, category: "top", length: "hip", fit: "oversized", neckline: "crew", sleeves: "short", color: "gray", pattern: "solid" },
+    { id: "starter-leggings", name: "Old Leggings", price: 0, category: "pants", length: "maxi", fit: "fitted", leg: "skinny", color: "black", pattern: "solid" },
     { id: "starter-sneakers", name: "Canvas Sneakers", price: 0, category: "shoes", style: "chunky-sneaker", color: "white" },
   ],
 

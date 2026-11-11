@@ -47,7 +47,7 @@ test("buying spends wallet cash only, never total saved, and can be undone", () 
   S.undoBuy(s, r);
   assert.equal(s.wallet.balanceCents, 10000);
   assert.equal(S.owns(s, "velvet-slip"), false);
-  assert.equal(s.avatar.equipped.top, "starter-tank");
+  assert.equal(s.avatar.equipped.top, "starter-tee");
 });
 
 test("stores unlock from saving, stay unlocked, and are announced once", () => {
